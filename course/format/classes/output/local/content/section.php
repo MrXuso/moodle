@@ -132,6 +132,7 @@ class section implements renderable, templatable {
             'num' => $thissection->section ?? '0',
             'id' => $thissection->id,
             'sectionreturnid' => $singlesection,
+            'insertafter' => false,
             'summary' => $summary->export_for_template($output),
             'availability' => $availability->export_for_template($output),
         ];
@@ -149,6 +150,24 @@ class section implements renderable, templatable {
             }
             if (empty($data->isstealth)) {
                 $data->cmcontrols = $output->course_section_add_cm_control($course, $thissection->section, $singlesection);
+            }
+        }
+
+        $coursedisplay = $course->coursedisplay ?? COURSE_DISPLAY_SINGLEPAGE;
+        if ($coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+            $data->iscoursedisplaymultipage = true;
+        }
+
+        if ($course->id == SITEID) {
+            $data->sitehome = true;
+        }
+
+        $data->contentexpanded = true;
+        $preferences = $format->get_sections_preferences();
+        if (isset($preferences[$thissection->id])) {
+            $sectionpreferences = $preferences[$thissection->id];
+            if (!empty($sectionpreferences->contentcollapsed)) {
+                $data->contentexpanded = false;
             }
         }
 

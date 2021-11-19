@@ -134,7 +134,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And "Subscribe to this discussion" "checkbox" should exist in the "Test post subject two" "table_row"
     And I log out
     And I am on the "Test forum name" "forum activity" page logged in as admin
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Subscription mode | Auto subscription |
     And I press "Save and return to course"
@@ -178,7 +178,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And I log out
     And I log in as "admin"
     And I am on the "Test forum name" "forum activity" page
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Subscription mode | Auto subscription |
     And I press "Save and return to course"
@@ -341,7 +341,6 @@ Feature: A user can control their own subscription preferences for a discussion
     And I follow "You are not subscribed to this discussion. Click to subscribe"
     And I should see "Student One will be notified of new posts in 'Test post subject one' of 'Test forum name'"
     And "Unsubscribe from this discussion" "checkbox" should exist in the "Test post subject one" "table_row"
-    And I follow "Test forum name"
     And I navigate to "Subscribe to this forum" in current page administration
     And I should see "Student One will be notified of new posts in 'Test forum name'"
     And "Unsubscribe from this forum" "link" should exist in current page administration

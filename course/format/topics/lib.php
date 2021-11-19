@@ -46,6 +46,14 @@ class format_topics extends core_courseformat\base {
         return true;
     }
 
+    public function uses_course_index() {
+        return true;
+    }
+
+    public function uses_indentation(): bool {
+        return false;
+    }
+
     /**
      * Returns the display name of the given section that the course prefers.
      *
@@ -153,6 +161,10 @@ class format_topics extends core_courseformat\base {
         $ajaxsupport = new stdClass();
         $ajaxsupport->capable = true;
         return $ajaxsupport;
+    }
+
+    public function supports_components() {
+        return true;
     }
 
     /**

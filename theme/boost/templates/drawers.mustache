@@ -63,7 +63,7 @@
             {{$id}}theme_boost-drawers-courseindex{{/id}}
             {{$drawerclasses}}drawer drawer-left {{#courseindexopen}}show{{/courseindexopen}}{{/drawerclasses}}
             {{$drawerheading}}
-                {{#str}} courseindex {{/str}}
+                {{#str}}courseindex, core_courseformat{{/str}}
             {{/drawerheading}}
             {{$drawercontent}}
                 {{{courseindex}}}
@@ -75,7 +75,7 @@
     {{#hasblocks}}
         {{< theme_boost/drawer }}
             {{$id}}theme_boost-drawers-blocks{{/id}}
-            {{$drawerclasses}}drawer drawer-right {{#blockdraweropen}}show{{/blockdraweropen}}{{/drawerclasses}}
+            {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
             {{$drawerheading}}
                 {{#str}} blocks {{/str}}
             {{/drawerheading}}
@@ -85,6 +85,7 @@
                 </section>
             {{/drawercontent}}
             {{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
+            {{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
             {{$drawerstate}}show-drawer-right{{/drawerstate}}
             {{$drawercloseonresize}}1{{/drawercloseonresize}}
         {{/ theme_boost/drawer}}
@@ -110,10 +111,15 @@
                 {{/hasblocks}}
             </div>
             {{{ output.full_header }}}
+            {{#secondarymoremenu}}
+                <div class="secondary-navigation">
+                    {{> core/moremenu}}
+                </div>
+            {{/secondarymoremenu}}
             <div id="page-content" class="pb-3 d-print-block">
                 <div id="region-main-box">
                     {{#hasregionmainsettingsmenu}}
-                    <div id="region-main-settings-menu" class="d-print-none {{#hasblocks}}has-blocks{{/hasblocks}}">
+                    <div id="region-main-settings-menu" class="d-print-none">
                         <div> {{{ output.region_main_settings_menu }}} </div>
                     </div>
                     {{/hasregionmainsettingsmenu}}
@@ -123,17 +129,15 @@
                             <div class="region_main_settings_menu_proxy"></div>
                         {{/hasregionmainsettingsmenu}}
                         {{{ output.course_content_header }}}
+                        {{#overflow}}
+                            {{> core/url_select}}
+                        {{/overflow}}
                         {{{ output.main_content }}}
                         {{{ output.activity_navigation }}}
                         {{{ output.course_content_footer }}}
 
                     </section>
                 </div>
-            </div>
-            <div id="goto-top-link">
-                <a class="btn btn-light" role="button" href="#topofscroll" aria-label="{{#str}} totop, theme_boost {{/str}}">
-                    {{#pix}} i/up, core{{/pix}}
-                </a>
             </div>
             {{> theme_boost/footer }}
         </div>

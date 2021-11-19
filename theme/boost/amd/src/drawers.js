@@ -64,17 +64,6 @@ const isSmall = () => {
 };
 
 /**
- * Check if the user uses a medium size browser.
- *
- * @returns {boolean} true if the body is smaller than sizes.medium max size.
- * @private
- */
-const isMedium = () => {
-    const browserWidth = getCurrentWidth();
-    return (browserWidth >= sizes.medium) && (browserWidth < sizes.large);
-};
-
-/**
  * Check if the user uses a large size browser.
  *
  * @returns {boolean} true if the body is smaller than sizes.large max size.
@@ -166,7 +155,11 @@ export default class Drawers {
         this.drawerNode = drawerNode;
 
         if (this.drawerNode.classList.contains('show')) {
-            this.openDrawer();
+            this.openDrawer({focusOnCloseButton: false});
+        } else if (this.drawerNode.dataset.forceopen == 1) {
+            if (!isSmall()) {
+                this.openDrawer({focusOnCloseButton: false});
+            }
         } else {
             Aria.hide(this.drawerNode);
         }
@@ -276,8 +269,15 @@ export default class Drawers {
 
     /**
      * Open the drawer.
+     *
+     * By default, openDrawer sets the page focus to the close drawer button. However, when a drawer is open at page
+     * load, this represents an accessibility problem as the initial focus changes without any user interaction. The
+     * focusOnCloseButton parameter can be set to false to prevent this behaviour.
+     *
+     * @param {object} args
+     * @param {boolean} [args.focusOnCloseButton=true] Whether to alter page focus when opening the drawer
      */
-    openDrawer() {
+    openDrawer({focusOnCloseButton = true} = {}) {
         const showEvent = this.dispatchEvent(Drawers.eventTypes.drawerShow, true);
         if (showEvent.defaultPrevented) {
             return;
@@ -287,7 +287,7 @@ export default class Drawers {
         this.drawerNode.classList.add('show');
 
         const preference = this.drawerNode.dataset.preference;
-        if (preference) {
+        if (preference && !isSmall() && (this.drawerNode.dataset.forceopen != 1)) {
             M.util.set_user_preference(preference, true);
         }
 
@@ -308,8 +308,10 @@ export default class Drawers {
             .catch();
         }
 
-        const closeButton = this.drawerNode.querySelector('[data-toggle="drawers"][data-action="closedrawer"]');
-        closeButton.focus();
+        if (focusOnCloseButton) {
+            const closeButton = this.drawerNode.querySelector('[data-toggle="drawers"][data-action="closedrawer"]');
+            closeButton.focus();
+        }
 
         this.dispatchEvent(Drawers.eventTypes.drawerShown);
     }
@@ -340,7 +342,7 @@ export default class Drawers {
         getBackdrop().then(backdrop => {
             backdrop.hide();
 
-            if (isMedium()) {
+            if (isSmall()) {
                 const pageWrapper = document.getElementById('page-wrapper');
                 pageWrapper.style.overflow = 'auto';
             }

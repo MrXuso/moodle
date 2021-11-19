@@ -67,7 +67,6 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
 }
 
 // Required for IE11 to prevent blocks being pushed under the content.
-#region-main-settings-menu.has-blocks,
 #region-main.has-blocks {
     display: inline-block;
     width: calc(100% - #{$blocks-plus-gutter});
@@ -103,6 +102,14 @@ $card-gutter : $card-deck-margin * 2;
 
 .block .empty-placeholder-image-lg {
     height: 5rem;
+}
+
+.block {
+    .searchbar {
+        .icon {
+            margin-right: 0;
+        }
+    }
 }
 
 .block .block-cards {
@@ -165,6 +172,8 @@ $card-gutter : $card-deck-margin * 2;
             height: 7rem;
             background-position: center;
             background-size: cover;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
         }
         .dashboard-card-footer {
             padding: 0.8rem;

@@ -139,8 +139,10 @@ $strpage = get_string("page");
 
 if (!$search || $showform) {
 
-    $PAGE->navbar->add($strforums, new moodle_url('/mod/forum/index.php', array('id'=>$course->id)));
-    $PAGE->navbar->add(get_string('advancedsearch', 'forum'));
+    $url = new moodle_url('/mod/forum/index.php', array('id' => $course->id));
+    $PAGE->navbar->add($strforums, $url);
+    $url = new moodle_url('/mod/forum/search.php', array('id' => $course->id));
+    $PAGE->navbar->add(get_string('advancedsearch', 'forum'), $url);
 
     $PAGE->set_title($strsearch);
     $PAGE->set_heading($course->fullname);
@@ -191,7 +193,7 @@ $rm = new rating_manager();
 
 $PAGE->set_title($strsearchresults);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_button($searchform);
+$PAGE->add_header_action($searchform);
 echo $OUTPUT->header();
 echo '<div class="reportlink">';
 

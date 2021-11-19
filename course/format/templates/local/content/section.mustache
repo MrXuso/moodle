@@ -70,17 +70,25 @@
             "menu": "<a href=\"#\" class=\"d-inline-block dropdown-toggle icon-no-margin\">Edit<b class=\"caret\"></b></a>",
             "hasmenu": true
         },
-        "cmcontrols": "[Add an activity or resource]"
+        "cmcontrols": "[Add an activity or resource]",
+        "iscoursedisplaymultipage": true,
+        "sectionreturnid": 0,
+        "contentexpanded": true,
+        "insertafter": true,
+        "numsections": 42,
+        "sitehome": false
     }
 }}
 <li id="section-{{num}}"
-        class="section main {{#onlysummary}} section-summary {{/onlysummary}} clearfix
-              {{#ishidden}} hidden {{/ishidden}} {{#iscurrent}} current {{/iscurrent}}
-              {{#isstealth}} orphaned {{/isstealth}}"
-        role="region"
-        aria-labelledby="sectionid-{{id}}-title"
-        data-sectionid="{{num}}"
-        data-sectionreturnid="{{sectionreturnid}}">
+    class="section main {{#onlysummary}} section-summary {{/onlysummary}} clearfix
+            {{#ishidden}} hidden {{/ishidden}} {{#iscurrent}} current {{/iscurrent}}
+            {{#isstealth}} orphaned {{/isstealth}}"
+    data-sectionid="{{num}}"
+    data-sectionreturnid="{{sectionreturnid}}"
+    data-for="section"
+    data-id="{{id}}"
+    data-number="{{num}}"
+>
     {{#singleheader}} {{> core_courseformat/local/content/section/header }} {{/singleheader}}
     <div class="left side">{{#iscurrent}} {{{currentlink}}} {{/iscurrent}}</div>
     <div class="right side">
@@ -88,8 +96,11 @@
             {{> core_courseformat/local/content/section/controlmenu }}
     {{/controlmenu}}
     </div>
-    <div class="content">
-        {{#header}} {{> core_courseformat/local/content/section/header }} {{/header}}
+    {{#header}} {{> core_courseformat/local/content/section/header }} {{/header}}
+    <div id="coursecontentcollapse{{num}}"
+         class="content {{^iscoursedisplaymultipage}}
+             {{^sitehome}}course-content-item-content collapse {{#contentexpanded}}show{{/contentexpanded}}{{/sitehome}}
+         {{/iscoursedisplaymultipage}}">
         {{#availability}}
             {{> core_courseformat/local/content/section/availability }}
         {{/availability}}
@@ -101,5 +112,10 @@
         {{#cmsummary}} {{> core_courseformat/local/content/section/cmsummary }} {{/cmsummary}}
         {{#cmlist}} {{> core_courseformat/local/content/section/cmlist }} {{/cmlist}}
         {{{cmcontrols}}}
+        {{#insertafter}}
+            {{#numsections}}
+                {{> core_courseformat/local/content/addsection}}
+            {{/numsections}}
+        {{/insertafter}}
     </div>
 </li>

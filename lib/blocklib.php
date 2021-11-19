@@ -383,6 +383,18 @@ class block_manager {
     }
 
     /**
+     * Determine whether a region contains any fake blocks.
+     *
+     * (Fake blocks are typically added to the extracontent array per region)
+     *
+     * @param string $region a block region that exists on this page.
+     * @return boolean Whether there are fake blocks in this region.
+     */
+    public function region_has_fakeblocks($region): bool {
+        return !empty($this->extracontent[$region]);
+    }
+
+    /**
      * Get an array of all of the installed blocks.
      *
      * @return array contents of the block table.
@@ -1284,6 +1296,12 @@ class block_manager {
             $str = new lang_string('configureblock', 'block', $blocktitle);
             $editactionurl = new moodle_url($actionurl, ['bui_editid' => $block->instance->id]);
             $editactionurl->remove_params(['sesskey']);
+
+            // Handle editing block on admin index page, prevent the page redirecting before block action can begin.
+            if ($editactionurl->compare(new moodle_url('/admin/index.php'), URL_MATCH_BASE)) {
+                $editactionurl->param('cache', 1);
+            }
+
             $controls[] = new action_menu_link_secondary(
                 $editactionurl,
                 new pix_icon('t/edit', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
@@ -1350,11 +1368,33 @@ class block_manager {
             $str = new lang_string('deleteblock', 'block', $blocktitle);
             $deleteactionurl = new moodle_url($actionurl, ['bui_deleteid' => $block->instance->id]);
             $deleteactionurl->remove_params(['sesskey']);
+
+            // Handle deleting block on admin index page, prevent the page redirecting before block action can begin.
+            if ($deleteactionurl->compare(new moodle_url('/admin/index.php'), URL_MATCH_BASE)) {
+                $deleteactionurl->param('cache', 1);
+            }
+
+            $deleteconfirmationurl = new moodle_url($actionurl, [
+                'bui_deleteid' => $block->instance->id,
+                'bui_confirm' => 1,
+                'sesskey' => sesskey(),
+            ]);
+            $blocktitle = $block->get_title();
+
             $controls[] = new action_menu_link_secondary(
                 $deleteactionurl,
                 new pix_icon('t/delete', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 $str,
-                array('class' => 'editing_delete')
+                [
+                    'class' => 'editing_delete',
+                    'data-confirmation' => 'modal',
+                    'data-confirmation-title-str' => json_encode(['deletecheck_modal', 'block']),
+                    'data-confirmation-question-str' => json_encode(['deleteblockcheck', 'block', $blocktitle]),
+                    'data-confirmation-yes-button-str' => json_encode(['delete', 'core']),
+                    'data-confirmation-toast' => 'true',
+                    'data-confirmation-toast-confirmation-str' => json_encode(['deleteblockinprogress', 'block', $blocktitle]),
+                    'data-confirmation-destination' => $deleteconfirmationurl->out(false),
+                ]
             );
         }
 
@@ -1520,6 +1560,7 @@ class block_manager {
             $deleteurlparams = $this->page->url->params();
             $deletepage->set_url($deleteurlbase, $deleteurlparams);
             $deletepage->set_block_actions_done();
+            $deletepage->set_secondarynav($this->get_secondarynav($block));
             // At this point we are either going to redirect, or display the form, so
             // overwrite global $PAGE ready for this. (Formslib refers to it.)
             $PAGE = $deletepage;
@@ -1609,6 +1650,23 @@ class block_manager {
     }
 
     /**
+     * Convenience function to check whether a block is implementing a secondary nav class and return it
+     * initialised to the calling function
+     *
+     * @param block_base $block
+     * @return \core\navigation\views\secondary
+     */
+    protected function get_secondarynav(block_base $block): \core\navigation\views\secondary {
+        $class = "core_block\\local\\views\\secondary";
+        if (class_exists("block_{$block->name()}\\local\\views\\secondary")) {
+            $class = "block_{$block->name()}\\local\\views\\secondary";
+        }
+        $secondarynav = new $class($this->page);
+        $secondarynav->initialise();
+        return $secondarynav;
+    }
+
+    /**
      * Handle showing/processing the submission from the block editing form.
      * @return boolean true if the form was submitted and the new config saved. Does not
      *      return if the editing form was displayed. False otherwise.
@@ -1635,6 +1693,8 @@ class block_manager {
         $editpage->set_course($this->page->course);
         //$editpage->set_context($block->context);
         $editpage->set_context($this->page->context);
+        $editpage->set_secondarynav($this->get_secondarynav($block));
+
         if ($this->page->cm) {
             $editpage->set_cm($this->page->cm);
         }
@@ -2587,7 +2647,7 @@ function blocks_add_default_system_blocks() {
         $subpagepattern = null;
     }
 
-    $newblocks = array('timeline', 'private_files', 'online_users', 'badges', 'calendar_month', 'calendar_upcoming');
-    $newcontent = array('lp', 'recentlyaccessedcourses', 'myoverview');
+    $newblocks = array('timeline', 'private_files', 'badges', 'calendar_month');
+    $newcontent = array('myoverview');
     $page->blocks->add_blocks(array(BLOCK_POS_RIGHT => $newblocks, 'content' => $newcontent), 'my-index', $subpagepattern);
 }

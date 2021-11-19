@@ -83,32 +83,6 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Turns editing mode on.
-     * @Given /^I turn editing mode on$/
-     */
-    public function i_turn_editing_mode_on() {
-
-        try {
-            $this->execute("behat_forms::press_button", get_string('turneditingon'));
-        } catch (Exception $e) {
-            $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", [get_string('turneditingon')]);
-        }
-    }
-
-    /**
-     * Turns editing mode off.
-     * @Given /^I turn editing mode off$/
-     */
-    public function i_turn_editing_mode_off() {
-
-        try {
-            $this->execute("behat_forms::press_button", get_string('turneditingoff'));
-        } catch (Exception $e) {
-            $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", [get_string('turneditingoff')]);
-        }
-    }
-
-    /**
      * Creates a new course with the provided table data matching course settings names with the desired values.
      *
      * @Given /^I create a course with:$/
@@ -121,8 +95,8 @@ class behat_course extends behat_base {
         // Ensure you are on course management page.
         $this->execute("behat_course::i_should_see_the_courses_management_page", get_string('categories'));
 
-        // Select Miscellaneous category.
-        $this->i_click_on_category_in_the_management_interface(get_string('miscellaneous'));
+        // Select default course category.
+        $this->i_click_on_category_in_the_management_interface(get_string('defaultcategoryname'));
         $this->execute("behat_course::i_should_see_the_courses_management_page", get_string('categoriesandcourses'));
 
         // Click create new course.
@@ -733,9 +707,7 @@ class behat_course extends behat_base {
      * @throws ExpectationException
      */
     public function activity_should_be_hidden($activityname) {
-
         if ($this->is_course_editor()) {
-
             // The activity should exist.
             $activitynode = $this->get_activity_node($activityname);
 
@@ -758,7 +730,6 @@ class behat_course extends behat_base {
             }
 
         } else {
-
             // It should not exist at all.
             try {
                 $this->get_activity_node($activityname);
@@ -791,38 +762,84 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Moves the specified activity to the first slot of a section. This step is experimental when using it in Javascript tests. Editing mode should be on.
+     * Moves the specified activity to the first slot of a section.
+     *
+     * Editing mode should be on.
      *
      * @Given /^I move "(?P<activity_name_string>(?:[^"]|\\")*)" activity to section "(?P<section_number>\d+)"$/
      * @param string $activityname The activity name
      * @param int $sectionnumber The number of section
      */
-    public function i_move_activity_to_section($activityname, $sectionnumber) {
+    public function i_move_activity_to_section($activityname, $sectionnumber): void {
+        // Ensure the destination is valid.
+        $sectionxpath = $this->section_exists($sectionnumber);
 
+        // Not all formats are compatible with the move tool.
+        $activitynode = $this->get_activity_node($activityname);
+        if (!$activitynode->find('css', "[data-action='moveCm']", false, false, 0)) {
+            // Execute the legacy YUI move option.
+            $this->i_move_activity_to_section_yui($activityname, $sectionnumber);
+            return;
+        }
+
+        // JS enabled.
+        if ($this->running_javascript()) {
+            $this->i_open_actions_menu($activityname);
+            $this->execute(
+                'behat_course::i_click_on_in_the_activity',
+                [get_string('move'), "link", $this->escape($activityname)]
+            );
+            $this->execute("behat_general::i_click_on_in_the", [
+                "[data-for='section'][data-number='$sectionnumber']",
+                'css_element',
+                "[data-region='modal-container']",
+                'css_element'
+            ]);
+        } else {
+            $this->execute(
+                'behat_course::i_click_on_in_the_activity',
+                [get_string('move'), "link", $this->escape($activityname)]
+            );
+            $this->execute(
+                'behat_general::i_click_on_in_the',
+                ["li.movehere a", "css_element", $this->escape($sectionxpath), "xpath_element"]
+            );
+        }
+    }
+
+    /**
+     * Moves the specified activity to the first slot of a section using the YUI course format.
+     *
+     * This step is experimental when using it in Javascript tests. Editing mode should be on.
+     *
+     * @param string $activityname The activity name
+     * @param int $sectionnumber The number of section
+     */
+    public function i_move_activity_to_section_yui($activityname, $sectionnumber): void {
         // Ensure the destination is valid.
         $sectionxpath = $this->section_exists($sectionnumber);
 
         // JS enabled.
         if ($this->running_javascript()) {
-
             $activitynode = $this->get_activity_element('Move', 'icon', $activityname);
             $destinationxpath = $sectionxpath . "/descendant::ul[contains(concat(' ', normalize-space(@class), ' '), ' yui3-dd-drop ')]";
-
-            $this->execute("behat_general::i_drag_and_i_drop_it_in",
-                array($this->escape($activitynode->getXpath()), "xpath_element",
-                    $this->escape($destinationxpath), "xpath_element")
+            $this->execute(
+                "behat_general::i_drag_and_i_drop_it_in",
+                [
+                    $this->escape($activitynode->getXpath()), "xpath_element",
+                    $this->escape($destinationxpath), "xpath_element",
+                ]
             );
-
         } else {
             // Following links with no-JS.
-
             // Moving to the fist spot of the section (before all other section's activities).
-            $this->execute('behat_course::i_click_on_in_the_activity',
-                array("a.editing_move", "css_element", $this->escape($activityname))
+            $this->execute(
+                'behat_course::i_click_on_in_the_activity',
+                ["a.editing_move", "css_element", $this->escape($activityname)]
             );
-
-            $this->execute('behat_general::i_click_on_in_the',
-                array("li.movehere a", "css_element", $this->escape($sectionxpath), "xpath_element")
+            $this->execute(
+                'behat_general::i_click_on_in_the',
+                ["li.movehere a", "css_element", $this->escape($sectionxpath), "xpath_element"]
             );
         }
     }
@@ -1310,15 +1327,13 @@ class behat_course extends behat_base {
      *
      * @return bool
      */
-    protected function is_course_editor() {
-
-        // We don't need to behat_base::spin() here as all is already loaded.
-        if (!$this->getSession()->getPage()->findButton(get_string('turneditingoff')) &&
-                !$this->getSession()->getPage()->findButton(get_string('turneditingon'))) {
+    protected function is_course_editor(): bool {
+        try {
+            $this->find('field', get_string('editmode'), false, false, 0);
+            return true;
+        } catch (ElementNotFoundException $e) {
             return false;
         }
-
-        return true;
     }
 
     /**
@@ -1327,7 +1342,8 @@ class behat_course extends behat_base {
      * @return bool
      */
     protected function is_editing_on() {
-        return $this->getSession()->getPage()->findButton(get_string('turneditingoff')) ? true : false;
+        $body = $this->find('xpath', "//body", false, false, 0);
+        return $body->hasClass('editing');
     }
 
     /**

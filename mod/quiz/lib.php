@@ -1129,9 +1129,9 @@ function quiz_process_options($quiz) {
 
     // Ensure that disabled checkboxes in completion settings are set to 0.
     if (empty($quiz->completionusegrade)) {
-        $quiz->completionpass = 0;
+        $quiz->completionpassgrade = 0;
     }
-    if (empty($quiz->completionpass)) {
+    if (empty($quiz->completionpassgrade)) {
         $quiz->completionattemptsexhausted = 0;
     }
     if (empty($quiz->completionminattemptsenabled)) {
@@ -2092,7 +2092,7 @@ function quiz_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, name, intro, introformat, completionattemptsexhausted, completionpass, completionminattempts,
+    $fields = 'id, name, intro, introformat, completionattemptsexhausted, completionminattempts,
         timeopen, timeclose';
     if (!$quiz = $DB->get_record('quiz', $dbparams, $fields)) {
         return false;
@@ -2108,9 +2108,9 @@ function quiz_get_coursemodule_info($coursemodule) {
 
     // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
-        if ($quiz->completionpass || $quiz->completionattemptsexhausted) {
+        if ($quiz->completionattemptsexhausted) {
             $result->customdata['customcompletionrules']['completionpassorattemptsexhausted'] = [
-                'completionpass' => $quiz->completionpass,
+                'completionpassgrade' => $coursemodule->completionpassgrade,
                 'completionattemptsexhausted' => $quiz->completionattemptsexhausted,
             ];
         } else {
@@ -2206,16 +2206,11 @@ function mod_quiz_get_completion_active_rule_descriptions($cm) {
     if (!empty($rules['completionpassorattemptsexhausted'])) {
         if (!empty($rules['completionpassorattemptsexhausted']['completionattemptsexhausted'])) {
             $descriptions[] = get_string('completionpassorattemptsexhausteddesc', 'quiz');
-        } else if (!empty($rules['completionpassorattemptsexhausted']['completionpass'])) {
-            $descriptions[] = get_string('completionpassdesc', 'quiz',
-                format_time($rules['completionpassorattemptsexhausted']['completionpass']));
         }
     } else {
         // Fallback.
         if (!empty($rules['completionattemptsexhausted'])) {
             $descriptions[] = get_string('completionpassorattemptsexhausteddesc', 'quiz');
-        } else if (!empty($rules['completionpass'])) {
-            $descriptions[] = get_string('completionpassdesc', 'quiz', format_time($rules['completionpass']));
         }
     }
 
@@ -2450,4 +2445,27 @@ function mod_quiz_output_fragment_add_random_question_form($args) {
     $form->set_data($formdata);
 
     return $form->render();
+}
+
+/**
+ * Callback to fetch the activity event type lang string.
+ *
+ * @param string $eventtype The event type.
+ * @return lang_string The event type lang string.
+ */
+function mod_quiz_core_calendar_get_event_action_string(string $eventtype): string {
+    $modulename = get_string('modulename', 'quiz');
+
+    switch ($eventtype) {
+        case QUIZ_EVENT_TYPE_OPEN:
+            $identifier = 'quizeventopens';
+            break;
+        case QUIZ_EVENT_TYPE_CLOSE:
+            $identifier = 'quizeventcloses';
+            break;
+        default:
+            return get_string('requiresaction', 'calendar', $modulename);
+    }
+
+    return get_string($identifier, 'quiz', $modulename);
 }

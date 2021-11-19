@@ -87,7 +87,7 @@ $bulkoperations = has_capability('moodle/course:bulkmessaging', $context);
 
 $PAGE->set_title("$course->shortname: ".get_string('participants'));
 $PAGE->set_heading($course->fullname);
-$PAGE->set_pagetype('course-view-' . $course->format);
+$PAGE->set_pagetype('course-view-participants');
 $PAGE->set_docs_path('enrol/users');
 $PAGE->add_body_class('path-user');                     // So we can style it independently.
 $PAGE->set_other_editing_capability('moodle/course:manageactivities');
@@ -307,13 +307,5 @@ echo html_writer::div($enrolbuttonsout, 'd-flex justify-content-end', [
     'data-region' => 'wrapper',
     'data-table-uniqueid' => $participanttable->uniqueid,
 ]);
-
-if ($newcourse == 1) {
-    $str = get_string('proceedtocourse', 'enrol');
-    // The margin is to make it line up with the enrol users button when they are both on the same line.
-    $classes = 'my-1';
-    $url = course_get_url($course);
-    echo $OUTPUT->single_button($url, $str, 'GET', array('class' => $classes));
-}
 
 echo $OUTPUT->footer();

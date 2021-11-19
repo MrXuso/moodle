@@ -66,6 +66,14 @@ $string['check_crawlers_error'] = 'Search engine access is allowed but guest acc
 $string['check_crawlers_info'] = 'Search engines may enter as guests.';
 $string['check_crawlers_name'] = 'Open to search engines';
 $string['check_crawlers_ok'] = 'Search engine access is not enabled.';
+
+$string['check_antivirus_details'] = 'This status checks whether or not there has been a recent error detected based on the threshold set in the main antivirus settings.';
+$string['check_antivirus_error'] = '{$a->errors} errors have been detected within the last {$a->lookback}';
+$string['check_antivirus_info'] = 'No antivirus scanners are currently enabled';
+$string['check_antivirus_name'] = 'Antivirus';
+$string['check_antivirus_ok'] = '{$a->scanners} antivirus scanner(s) enabled, no issues have been detected in the last {$a->lookback}';
+$string['check_antivirus_logstore_not_supported'] = 'Unable to verify state of antivirus scanners due to the type of log store chosen';
+
 $string['check_dotfiles_info'] = 'All dotfiles except /.well-known/* should not be public';
 $string['check_dirindex_info'] = 'Directory index should not be enabled';
 $string['check_guestrole_details'] = '<p>The guest role is used for guests, not logged in users and temporary guest course access. Please make sure no risky capabilities are allowed in this role.</p>
@@ -74,10 +82,6 @@ $string['check_guestrole_error'] = 'The guest role "{$a}" is incorrectly defined
 $string['check_guestrole_name'] = 'Guest role';
 $string['check_guestrole_notset'] = 'Guest role is not set.';
 $string['check_guestrole_ok'] = 'Guest role definition is OK.';
-$string['check_mediafilterswf_details'] = '<p>Automatic swf embedding is very dangerous - any registered user may launch an XSS attack against other server users. Please disable it on production servers.</p>';
-$string['check_mediafilterswf_error'] = 'Flash media filter is enabled - this is very dangerous for the majority of servers.';
-$string['check_mediafilterswf_name'] = 'Enabled .swf media filter';
-$string['check_mediafilterswf_ok'] = 'Flash media filter is not enabled.';
 $string['check_nodemodules_details'] = '<p>The directory <code>{$a->path}</code> contains Node.js modules and their dependencies, typically installed by the NPM utility. These modules may be needed for local Moodle development, such as for using the grunt framework. They are not needed to run a Moodle site in production and they can contain potentially dangerous code exposing your site to remote attacks.</p><p>It is strongly recommended to remove the directory if the site is available via a public URL, or at least prohibit web access to it in your webserver configuration.</p>';
 $string['check_nodemodules_info'] = 'The node_modules directory should not be present on public sites.';
 $string['check_nodemodules_name'] = 'Node.js modules directory';
@@ -139,3 +143,9 @@ $string['pluginname'] = 'Security checks';
 $string['security:view'] = 'View security report';
 $string['timewarning'] = 'Data processing may take a long time, please be patient...';
 $string['privacy:metadata'] = 'The Security overview plugin does not store any personal data.';
+
+// Deprecated since Moodle 4.0.
+$string['check_mediafilterswf_details'] = '<p>Automatic swf embedding is very dangerous - any registered user may launch an XSS attack against other server users. Please disable it on production servers.</p>';
+$string['check_mediafilterswf_error'] = 'Flash media filter is enabled - this is very dangerous for the majority of servers.';
+$string['check_mediafilterswf_name'] = 'Enabled .swf media filter';
+$string['check_mediafilterswf_ok'] = 'Flash media filter is not enabled.';

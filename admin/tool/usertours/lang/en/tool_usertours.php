@@ -31,6 +31,8 @@ $string['block_named'] = 'Block named \'{$a}\'';
 $string['cachedef_stepdata'] = 'List of user tour steps';
 $string['cachedef_tourdata'] = 'List of enabled user tours information which is fetched on every page';
 $string['description'] = 'Description';
+$string['displaystepnumbers'] = 'Display step numbers';
+$string['displaystepnumbers_help'] = 'Whether to display a step number count e.g. 1/4, 2/4 etc. to indicate the length of the user tour.';
 $string['confirmstepremovalquestion'] = 'Are you sure that you wish to remove this step?';
 $string['confirmstepremovaltitle'] = 'Confirm step removal';
 $string['confirmtourremovalquestion'] = 'Are you sure that you wish to remove this tour?';
@@ -49,6 +51,8 @@ $string['duplicatetour_name'] = '{$a} (copy)';
 $string['editstep'] = 'Editing "{$a}"';
 $string['tourisenabled'] = 'Tour is enabled';
 $string['enabled'] = 'Enabled';
+$string['endtourlabel'] = 'End tour button\'s label';
+$string['endtourlabel_help'] = 'You can optionally specify a custom label for the end tour button. The default label is "Got it" for single-step, and "End tour" for multiple-step tours.';
 $string['event_tour_started'] = 'Tour started';
 $string['event_tour_reset'] = 'Tour reset';
 $string['event_tour_ended'] = 'Tour ended';
@@ -87,6 +91,7 @@ $string['newstep'] = 'New step';
 $string['newtour'] = 'Create a new tour';
 $string['next'] = 'Next';
 $string['nextstep'] = 'Next';
+$string['nextstep_sequence'] = 'Next ({$a->position}/{$a->total})';
 $string['options_heading'] = 'Options';
 $string['pathmatch'] = 'Apply to URL match';
 $string['pathmatch_help'] = 'Tours will be displayed on any page whose URL matches this value.
@@ -103,7 +108,6 @@ If you wish to display a tour on the Site Home page, you can use the value: "FRO
 ';
 $string['placement'] = 'Placement';
 $string['pluginname'] = 'User tours';
-$string['previousstep'] = 'Previous';
 $string['resettouronpage'] = 'Reset user tour on this page';
 $string['right'] = 'Right';
 $string['select_block'] = 'Select a block';
@@ -115,6 +119,7 @@ $string['targettype_help'] = 'Each step is associated with a part of the page - 
 $string['selector_defaulttitle'] = 'Enter a descriptive title';
 $string['selectordisplayname'] = 'A CSS selector matching \'{$a}\'';
 $string['skip'] = 'Skip';
+$string['skip_tour'] = 'Skip tour';
 $string['target'] = 'Target';
 $string['target_heading'] = 'Step target';
 $string['target_block'] = 'Block';
@@ -130,7 +135,7 @@ $string['tourlist_explanation'] = 'You can create as many tours as you like and 
 $string['tours'] = 'Tours';
 $string['pausetour'] = 'Pause';
 $string['resumetour'] = 'Resume';
-$string['endonesteptour'] = 'Got it!';
+$string['endonesteptour'] = 'Got it';
 $string['endtour'] = 'End tour';
 $string['orphan'] = 'Show if target not found';
 $string['orphan_help'] = 'Show the step if the target could not be found on the page.';
@@ -251,3 +256,6 @@ $string['tour_activityinfo_course_teacher_content'] = 'New course settings \'Sho
 
 $string['tour_final_step_title'] = 'End of tour';
 $string['tour_final_step_content'] = 'This is the end of your user tour. It won\'t show again unless you reset it using the link in the footer.';
+
+// Deprecated since Moodle 4.0.
+$string['previousstep'] = 'Previous';

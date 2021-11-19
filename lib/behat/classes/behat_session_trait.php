@@ -134,7 +134,7 @@ trait behat_session_trait {
         }
 
         // How much we will be waiting for the element to appear.
-        if (!$timeout) {
+        if ($timeout === false) {
             $timeout = self::get_timeout();
             $microsleep = false;
         } else {
@@ -339,7 +339,7 @@ trait behat_session_trait {
     protected function spin($lambda, $args = false, $timeout = false, $exception = false, $microsleep = false) {
 
         // Using default timeout which is pretty high.
-        if (!$timeout) {
+        if ($timeout === false) {
             $timeout = self::get_timeout();
         }
 
@@ -748,6 +748,8 @@ trait behat_session_trait {
      * @throws ExpectationException
      */
     protected function resize_window($windowsize, $viewport = false) {
+        global $CFG;
+
         // Non JS don't support resize window.
         if (!$this->running_javascript()) {
             return;
@@ -775,6 +777,12 @@ trait behat_session_trait {
                 $width = (int) $size[0];
                 $height = (int) $size[1];
         }
+
+        if (isset($CFG->behat_window_size_modifier) && is_numeric($CFG->behat_window_size_modifier)) {
+            $width *= $CFG->behat_window_size_modifier;
+            $height *= $CFG->behat_window_size_modifier;
+        }
+
         if ($viewport) {
             // When setting viewport size, we set it so that the document width will be exactly
             // as specified, assuming that there is a vertical scrollbar. (In cases where there is
@@ -1552,7 +1560,7 @@ EOF;
         $cmtable = new \core\dml\table('course_modules', 'cm', 'cm');
         $cmfrom = $cmtable->get_from_sql();
 
-        $acttable = new \core\dml\table($activity, 'act', 'act');
+        $acttable = new \core\dml\table($activity, 'a', 'a');
         $actselect = $acttable->get_field_select();
         $actfrom = $acttable->get_from_sql();
 
@@ -1561,8 +1569,8 @@ EOF;
       FROM {$cmfrom}
 INNER JOIN {$coursefrom} ON c.id = cm.course
 INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-INNER JOIN {$actfrom} ON cm.instance = act.id
-     WHERE cm.idnumber = :idnumber OR act.name = :name
+INNER JOIN {$actfrom} ON cm.instance = a.id
+     WHERE cm.idnumber = :idnumber OR a.name = :name
 EOF;
 
         $result = $DB->get_record_sql($sql, [

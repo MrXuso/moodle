@@ -38,7 +38,7 @@ Feature: Steps can be navigated within a tour
     And I follow "Dashboard" in the user menu
     And I wait until the page is ready
     And I should see "This is the calendar block"
-    Then I should see "Got it!"
+    Then I should see "Got it"
 
   @javascript
   Scenario: End tour button text for multiple step tours
@@ -56,7 +56,27 @@ Feature: Steps can be navigated within a tour
       | Block                       | Course overview   | Course overview   | This area shows you what's happening in some of your courses  |
       | Block                       | Calendar          | Calendar          | This is the Calendar. All of your assignments and due dates can be found here |
     When I am on homepage
-    Then I should see "End tour"
-    And I should see "Next"
-    And I click on "Next" "button"
+    Then I should see "Skip tour"
+    And I should see "Next (1/3)"
+    And I click on "Next (1/3)" "button" in the "Welcome" "dialogue"
+    And I should see "Skip tour"
+    And I click on "Next (2/3)" "button" in the "Course overview" "dialogue"
     And I should see "End tour"
+
+  @javascript
+  Scenario: Customised 'end tour' button text for one step tours
+    Given I log in as "admin"
+    And I add a new user tour with:
+      | Name                    | Calendar tour |
+      | Description             | Calendar tour |
+      | Apply to URL match      | /my/%         |
+      | Tour is enabled         | 1             |
+      | End tour button's label | CustomText    |
+    And I add steps to the "Calendar tour" tour:
+      | targettype   | Block        | Title             | Content |
+      | Block        | Calendar     | Calendar events   | This is the calendar block |
+    And I change window size to "large"
+    And I follow "Dashboard" in the user menu
+    And I wait until the page is ready
+    And I should see "This is the calendar block"
+    Then I should see "CustomText"

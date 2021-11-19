@@ -53,6 +53,7 @@ class icon_system_fontawesome extends icon_system_font {
     public function get_core_icon_map() {
         return [
             'core:docs' => 'fa-info-circle',
+            'core:book' => 'fa-book',
             'core:help' => 'fa-question-circle text-info',
             'core:req' => 'fa-exclamation-circle text-danger',
             'core:a/add_file' => 'fa-file-o',
@@ -211,7 +212,6 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/completion_self' => 'fa-user-o',
             'core:i/contentbank' => 'fa-paint-brush',
             'core:i/dashboard' => 'fa-tachometer',
-            'core:i/lock' => 'fa-lock',
             'core:i/categoryevent' => 'fa-cubes',
             'core:i/course' => 'fa-graduation-cap',
             'core:i/courseevent' => 'fa-graduation-cap',
@@ -238,6 +238,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/enrolusers' => 'fa-user-plus',
             'core:i/expired' => 'fa-exclamation text-warning',
             'core:i/export' => 'fa-download',
+            'core:i/externallink' => 'fa-external-link',
             'core:i/files' => 'fa-file',
             'core:i/filter' => 'fa-filter',
             'core:i/flagged' => 'fa-flag',
@@ -288,7 +289,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/news' => 'fa-newspaper-o',
             'core:i/next' => 'fa-chevron-right',
             'core:i/nosubcat' => 'fa-plus-square-o',
-            'core:i/notifications' => 'fa-bell',
+            'core:i/notifications' => 'fa-bell-o',
             'core:i/open' => 'fa-folder-open',
             'core:i/otherevent' => 'fa-calendar',
             'core:i/outcomes' => 'fa-tasks',
@@ -345,6 +346,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/warning' => 'fa-exclamation text-warning',
             'core:i/window_close' => 'fa-window-close',
             'core:i/withsubcat' => 'fa-plus-square',
+            'core:i/language' => 'fa-language',
             'core:m/USD' => 'fa-usd',
             'core:t/addcontact' => 'fa-address-card',
             'core:t/add' => 'fa-plus',
@@ -365,6 +367,10 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/collapsed_rtl' => 'fa-caret-left',
             'core:t/collapsed' => 'fa-caret-right',
             'core:t/collapsedcaret' => 'fa-caret-right',
+            'core:t/collapsedchevron' => 'fa-chevron-right',
+            'core:t/completion_complete' => 'fa-circle',
+            'core:t/completion_fail' => 'fa-times',
+            'core:t/completion_incomplete' => 'fa-circle-thin',
             'core:t/contextmenu' => 'fa-cog',
             'core:t/copy' => 'fa-copy',
             'core:t/delete' => 'fa-trash',
@@ -384,6 +390,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/emptystar' => 'fa-star-o',
             'core:t/enrolusers' => 'fa-user-plus',
             'core:t/expanded' => 'fa-caret-down',
+            'core:t/expandedchevron' => 'fa-chevron-down',
             'core:t/go' => 'fa-play',
             'core:t/grades' => 'fa-table',
             'core:t/groupn' => 'fa-user',
@@ -397,7 +404,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/locktime' => 'fa-lock',
             'core:t/markasread' => 'fa-check',
             'core:t/messages' => 'fa-comments',
-            'core:t/message' => 'fa-comment',
+            'core:t/message' => 'fa-comment-o',
             'core:t/more' => 'fa-caret-down',
             'core:t/move' => 'fa-arrows-v',
             'core:t/online' => 'fa-circle',
@@ -486,4 +493,3 @@ class icon_system_fontawesome extends icon_system_font {
     }
 
 }
-

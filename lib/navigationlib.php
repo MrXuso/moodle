@@ -149,6 +149,10 @@ class navigation_node implements renderable {
     public $requiresajaxloading = false;
     /** @var bool If set to true this node will be added to the "flat" navigation */
     public $showinflatnavigation = false;
+    /** @var bool If set to true this node will be forced into a "more" menu whenever possible */
+    public $forceintomoremenu = false;
+    /** @var bool If set to true this node will be displayed in the "secondary" navigation when applicable */
+    public $showinsecondarynavigation = true;
 
     /**
      * Constructs a new navigation_node
@@ -838,6 +842,30 @@ class navigation_node implements renderable {
             return $this->action->url;
         }
         return $this->action;
+    }
+
+    /**
+     * Sets whether the node and its children should be added into a "more" menu whenever possible.
+     *
+     * @param bool $forceintomoremenu
+     */
+    public function set_force_into_more_menu(bool $forceintomoremenu = false) {
+        $this->forceintomoremenu = $forceintomoremenu;
+        foreach ($this->children as $child) {
+            $child->set_force_into_more_menu($forceintomoremenu);
+        }
+    }
+
+    /**
+     * Sets whether the node and its children should be displayed in the "secondary" navigation when applicable.
+     *
+     * @param bool $show
+     */
+    public function set_show_in_secondary_navigation(bool $show = true) {
+        $this->showinsecondarynavigation = $show;
+        foreach ($this->children as $child) {
+            $child->set_show_in_secondary_navigation($show);
+        }
     }
 
     /**
@@ -4377,12 +4405,13 @@ class settings_navigation extends navigation_node {
             // Now we need to display it and any children it may have
             $url = null;
             $icon = null;
-            if ($adminbranch instanceof admin_settingpage) {
-                $url = new moodle_url('/'.$CFG->admin.'/settings.php', array('section'=>$adminbranch->name));
-            } else if ($adminbranch instanceof admin_externalpage) {
-                $url = $adminbranch->url;
-            } else if (!empty($CFG->linkadmincategories) && $adminbranch instanceof admin_category) {
-                $url = new moodle_url('/'.$CFG->admin.'/category.php', array('category' => $adminbranch->name));
+
+            if ($adminbranch instanceof \core_admin\local\settings\linkable_settings_page) {
+                if (empty($CFG->linkadmincategories) && $adminbranch instanceof admin_category) {
+                    $url = null;
+                } else {
+                    $url = $adminbranch->get_settings_page_url();
+                }
             }
 
             // Add the branch
@@ -4465,7 +4494,8 @@ class settings_navigation extends navigation_node {
         if ($adminoptions->update) {
             // Add the course settings link
             $url = new moodle_url('/course/edit.php', array('id'=>$course->id));
-            $coursenode->add(get_string('editsettings'), $url, self::TYPE_SETTING, null, 'editsettings', new pix_icon('i/settings', ''));
+            $coursenode->add(get_string('settings'), $url, self::TYPE_SETTING, null,
+                'editsettings', new pix_icon('i/settings', ''));
         }
 
         if ($adminoptions->editcompletion) {
@@ -4486,7 +4516,8 @@ class settings_navigation extends navigation_node {
         // Manage filters
         if ($adminoptions->filters) {
             $url = new moodle_url('/filter/manage.php', array('contextid'=>$coursecontext->id));
-            $coursenode->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/filter', ''));
+            $coursenode->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING,
+                null, 'filtermanagement', new pix_icon('i/filter', ''));
         }
 
         // View course reports.
@@ -4650,7 +4681,7 @@ class settings_navigation extends navigation_node {
         // Settings for the module
         if (has_capability('moodle/course:manageactivities', $this->page->cm->context)) {
             $url = new moodle_url('/course/modedit.php', array('update' => $this->page->cm->id, 'return' => 1));
-            $modulenode->add(get_string('editsettings'), $url, navigation_node::TYPE_SETTING, null, 'modedit');
+            $modulenode->add(get_string('settings'), $url, navigation_node::TYPE_SETTING, null, 'modedit');
         }
         // Assign local roles
         if (count(get_assignable_roles($this->page->cm->context))>0) {
@@ -5297,7 +5328,7 @@ class settings_navigation extends navigation_node {
         if (can_edit_in_category($catcontext->instanceid)) {
             $url = new moodle_url('/course/management.php', array('categoryid' => $catcontext->instanceid));
             $editstring = get_string('managecategorythis');
-            $categorynode->add($editstring, $url, self::TYPE_SETTING, null, null, new pix_icon('i/edit', ''));
+            $categorynode->add($editstring, $url, self::TYPE_SETTING, null, 'managecategory', new pix_icon('i/edit', ''));
         }
 
         if (has_capability('moodle/category:manage', $catcontext)) {
@@ -5404,7 +5435,7 @@ class settings_navigation extends navigation_node {
         }
         $frontpage->id = 'frontpagesettings';
 
-        if ($this->page->user_allowed_editing()) {
+        if ($this->page->user_allowed_editing() && !$this->page->theme->haseditswitch) {
 
             // Add the turn on/off settings
             $url = new moodle_url('/course/view.php', array('id'=>$course->id, 'sesskey'=>sesskey()));

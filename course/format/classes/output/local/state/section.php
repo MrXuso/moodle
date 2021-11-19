@@ -54,16 +54,38 @@ class section implements renderable {
      * @return array data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
+
         $format = $this->format;
+        $course = $format->get_course();
         $section = $this->section;
         $modinfo = $format->get_modinfo();
+
+        $isactive = true;
+        $contentexpanded = true;
+        $preferences = $format->get_sections_preferences();
+        if (isset($preferences[$section->id])) {
+            $sectionpreferences = $preferences[$section->id];
+            if (!empty($sectionpreferences->contentcollapsed)) {
+                $contentexpanded = false;
+            }
+            if (!empty($sectionpreferences->indexcollapsed)) {
+                $isactive = false;
+            }
+        }
 
         $data = (object)[
             'id' => $section->id,
             'section' => $section->section,
+            'number' => $section->section,
             'title' => $format->get_section_name($section),
+            'hassummary' => !empty($section->summary),
+            'rawtitle' => $section->name,
             'cmlist' => [],
             'visible' => !empty($section->visible),
+            'sectionurl' => course_get_url($course, $section->section)->out(),
+            'current' => $format->is_section_current($section),
+            'isactive' => $isactive,
+            'contentexpanded' => $contentexpanded
         ];
 
         if (empty($modinfo->sections[$section->section])) {

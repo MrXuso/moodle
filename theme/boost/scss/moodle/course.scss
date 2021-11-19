@@ -1,4 +1,7 @@
 /* course.less */
+
+$course-editinprogress-bg: $gray-100 !default;
+
 /* COURSE CONTENT */
 
 .section_add_menus {
@@ -186,6 +189,25 @@ body:not(.editing)  .sitetopic ul.section {
             }
         }
     }
+    .editinprogress {
+        opacity: .7;
+        animation: editinprogress-pulse 2s infinite linear;
+    }
+}
+
+@keyframes editinprogress-pulse {
+    0% {
+        background-color: $course-editinprogress-bg;
+        filter: grayscale(60%);
+    }
+    50% {
+        background-color: darken($course-editinprogress-bg, 5%);
+        filter: grayscale(40%);
+    }
+    100% {
+        background-color: $course-editinprogress-bg;
+        filter: grayscale(60%);
+    }
 }
 
 .editing_show + .editing_assign,
@@ -232,6 +254,17 @@ body:not(.editing)  .sitetopic ul.section {
     }
 }
 
+.course-content .section.dropready {
+
+    &.main.drop-down {
+        border-bottom: 2px solid $dropzone-border;
+    }
+
+    li.activity.dropready.drop-down {
+        border-bottom: 2px solid $dropzone-border;
+    }
+}
+
 .section .activity .activityinstance .groupinglabel {
     padding-left: 30px;
 }
@@ -246,9 +279,12 @@ body:not(.editing)  .sitetopic ul.section {
     margin: .5em 0;
 }
 
-.editing .section .activity:hover,
-.editing .section .activity.action-menu-shown {
-    background-color: $table-accent-bg;
+.editing .section {
+    .activity:hover,
+    .activity.action-menu-shown,
+    .sectionname:hover {
+        background-color: $table-accent-bg;
+    }
 }
 
 .course-content .current {
@@ -354,7 +390,7 @@ body:not(.editing)  .sitetopic ul.section {
     list-style: none;
 
     li.section {
-        margin-top: $spacer;
+        padding-top: $spacer;
         padding-bottom: $spacer;
         .content {
             margin: 0;
@@ -1219,4 +1255,26 @@ span.editinstructions {
     .badge {
         font-size: 100%;
     }
+}
+
+$activity-item-background: theme-color-level('primary', -12) !default;
+$activity-item-border: theme-color-level('primary', -2) !default;
+$activity-item-color: $body-color;
+$activity-item-hover: theme-color-level('primary', -10) !default;
+.activity-add {
+    @if $enable-rounded {
+        @include border-radius($card-border-radius);
+    }
+    @include alert-variant($activity-item-background, $activity-item-border, $activity-item-border);
+    border-width: $border-width;
+    border-style: dashed;
+    .pluscontainer {
+        border: $border-width solid $activity-item-border;
+    }
+    &:hover {
+        cursor: pointer;
+        background-color: $activity-item-hover;
+    }
+    width: 100%;
+    border-radius: 4px;
 }

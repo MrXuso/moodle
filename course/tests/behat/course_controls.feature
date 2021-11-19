@@ -2,7 +2,7 @@
 Feature: Course activity controls works as expected
   In order to manage my course's activities
   As a teacher
-  I need to edit, hide, show and indent activities inside course sections
+  I need to edit, hide and show activities inside course sections
 
   # The difference between these two scenario outlines is that one is with
   # JS enabled and the other one with JS disabled; we can not use Background
@@ -33,7 +33,7 @@ Feature: Course activity controls works as expected
     And I add the "Recent activity" block
     And I open the action menu in "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"
-    And I press "Yes"
+    And I click on "Delete" "button" in the "Delete block?" "dialogue"
     And <belowpage> "section" <should_see_other_sections> exist
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name 1 |
@@ -41,10 +41,6 @@ Feature: Course activity controls works as expected
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name 2 |
       | Description | Test forum description 2 |
-    And <belowpage> "section" <should_see_other_sections> exist
-    And I indent right "Test forum name 1" activity
-    And <belowpage> "section" <should_see_other_sections> exist
-    And I indent left "Test forum name 1" activity
     And <belowpage> "section" <should_see_other_sections> exist
     And I open "Test forum name 1" actions menu
     And I click on "Edit settings" "link" in the "Test forum name 1" activity
@@ -81,12 +77,12 @@ Feature: Course activity controls works as expected
 
     Examples:
       | courseformat | coursedisplay | targetpage              | should_see_other_sections | should_see_other_sections_following_block_sections_links | belowpage                |
-      | topics       | 0             | "Course 1"              | should                    | should                                                   | "Topic 2"                |
+      | topics       | 0             | "C1"                    | should                    | should                                                   | "Topic 2"                |
       | topics       | 1             | "Topic 1"               | should not                | should not                                               | "Topic 2"                |
-      | topics       | 1             | "Course 1"              | should                    | should not                                               | "Topic 2"                |
-      | weeks        | 0             | "Course 1"              | should                    | should                                                   | "8 January - 14 January" |
+      | topics       | 1             | "C1"                    | should                    | should not                                               | "Topic 2"                |
+      | weeks        | 0             | "C1"                    | should                    | should                                                   | "8 January - 14 January" |
       | weeks        | 1             | "1 January - 7 January" | should not                | should not                                               | "8 January - 14 January" |
-      | weeks        | 1             | "Course 1"              | should                    | should not                                               | "8 January - 14 January" |
+      | weeks        | 1             | "C1"                    | should                    | should not                                               | "8 January - 14 January" |
 
   Scenario Outline: General activities course controls using topics and weeks formats, and paged mode and not paged mode works as expected
     Given the following "users" exist:
@@ -110,11 +106,6 @@ Feature: Course activity controls works as expected
     And I open the action menu in "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"
     And I press "Yes"
-    And <belowpage> "section" <should_see_other_sections> exist
-    And <belowpage> "section" <should_see_other_sections> exist
-    And I indent right "Test forum name 1" activity
-    And <belowpage> "section" <should_see_other_sections> exist
-    And I indent left "Test forum name 1" activity
     And <belowpage> "section" <should_see_other_sections> exist
     And I click on "Edit settings" "link" in the "Test forum name 1" activity
     And I should see "Updating Forum"
@@ -146,9 +137,9 @@ Feature: Course activity controls works as expected
 
     Examples:
       | courseformat | coursedisplay | targetpage              | should_see_other_sections | should_see_other_sections_following_block_sections_links | belowpage                |
-      | topics       | 0             | "Course 1"              | should                    | should                                                   | "Topic 2"                |
+      | topics       | 0             | "C1"                    | should                    | should                                                   | "Topic 2"                |
       | topics       | 1             | "Topic 1"               | should not                | should not                                               | "Topic 2"                |
-      | topics       | 1             | "Course 1"              | should                    | should not                                               | "Topic 2"                |
-      | weeks        | 0             | "Course 1"              | should                    | should                                                   | "8 January - 14 January" |
+      | topics       | 1             | "C1"                    | should                    | should not                                               | "Topic 2"                |
+      | weeks        | 0             | "C1"                    | should                    | should                                                   | "8 January - 14 January" |
       | weeks        | 1             | "1 January - 7 January" | should not                | should not                                               | "8 January - 14 January" |
-      | weeks        | 1             | "Course 1"              | should                    | should not                                               | "8 January - 14 January" |
+      | weeks        | 1             | "C1"                    | should                    | should not                                               | "8 January - 14 January" |

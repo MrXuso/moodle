@@ -20,6 +20,7 @@ Feature: Settings form fields disabled if not required
       | student2 | C1     | student        |
     And I log in as "teacher"
     And I am on "Course 1" course homepage with editing mode on
+    And I change window size to "large"
 
   @javascript
   Scenario: Depending on the number of attempts, different form fields are disabled.
@@ -58,7 +59,7 @@ Feature: Settings form fields disabled if not required
         | Attempts allowed | 3        |
     And I press "Save"
     And I follow "Test quiz"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Attempts allowed" to "1"
     Then the "Grading method" "field" should be enabled
@@ -72,7 +73,7 @@ Feature: Settings form fields disabled if not required
     And I set the field "Attempts allowed" to "2"
     And I press "Save"
     And I follow "Test quiz"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Attempts allowed" to "1"
     Then the "Grading method" "field" should be enabled
@@ -88,7 +89,7 @@ Feature: Settings form fields disabled if not required
         | Attempts allowed | Unlimited |
     And I press "Save"
     And I follow "Test quiz"
-    And I navigate to "Edit settings" in current page administration
+    And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Attempts allowed" to "1"
     Then the "Grading method" "field" should be enabled
